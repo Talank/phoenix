@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="!loadingConfig">
     <link v-if="phoenixUrl" rel="stylesheet" :href="phoenixUrl + '/dist-wc/design-system/system.css'" />
     <oc-navbar id="oc-topbar" tag="header" class="oc-topbar uk-navbar">
       <oc-navbar-item position="left">
@@ -12,7 +12,7 @@
       </oc-navbar-item>
       <oc-navbar-item position="right" v-if="!isPublicPage">
         <notifications v-if="activeNotifications.length" />
-        <applications-menu :applicationsList="applicationsList"/>
+        <applications-menu :applicationsList="$_applicationsList"/>
         <user-menu :user-id="userId" :user-display-name="userDisplayName" />
       </oc-navbar-item>
     </oc-navbar>
@@ -73,21 +73,43 @@ export default {
       required: false
     }
   },
+  data () {
+    return {
+      loadingConfig: true
+    }
+  },
   computed: {
     isPublicPage () {
       return !this.userId
+    },
+    $_applicationsList () {
+      return this.applicationsList
     }
   },
-  beforeMount () {
+  async beforeMount () {
     // web component mode
     if (!this.$root.config) {
-      // set dummy config object
-      // FIXME: need a better way, should we receive the config through attributes ?
-      this.$root.config = {
-        isWebComponent: true,
-        server: this.serverUrl,
-        enableAvatars: true // TODO: read from actual config
+      let config = {}
+      // FIXME: duplicate from phoenix.js, maybe need common utility functions ?
+      try {
+        config = await fetch(this.phoenixUrl + '/config.json')
+        config = await config.json()
+        config.isWebComponent = true
+        // TODO: also load capabilities...
+        config.enableAvatars = true
+      } catch (e) {
+        config.state = 'missing'
       }
+      this.$root.config = config
+      // FIXME: also include apps from extension points
+      if (!this.$_applicationsList || !this.$_applicationsList.length) {
+        this.$_applicationsList = config.applications
+      }
+      // TODO: init language
+      console.log('config: ', config)
+      this.loadingConfig = false
+    } else {
+      this.loadingConfig = false
     }
   },
   methods: {
