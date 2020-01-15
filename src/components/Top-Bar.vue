@@ -1,7 +1,7 @@
 <template>
   <div>
     <link v-if="phoenixUrl" rel="stylesheet" :href="phoenixUrl + '/dist-wc/design-system/system.css'" />
-    <oc-navbar id="oc-topbar" tag="header" class="oc-topbar uk-position-relative uk-navbar">
+    <oc-navbar id="oc-topbar" tag="header" class="oc-topbar uk-navbar">
       <oc-navbar-item position="left">
         <oc-button v-if="hasAppNavigation" icon="menu" variation="primary" class="oc-topbar-menu-burger uk-height-1-1" aria-label="Menu" @click="$_onOpenAppNavigation" ref="menubutton">
           <span class="oc-topbar-menu-burger-label" v-translate>Menu</span>
@@ -52,7 +52,7 @@ export default {
     applicationsList: {
       type: Array,
       required: false,
-      default: () => null
+      default: () => []
     },
     hasAppNavigation: {
       type: Boolean,
@@ -67,11 +67,27 @@ export default {
     phoenixUrl: {
       type: String,
       required: false
+    },
+    serverUrl: {
+      type: String,
+      required: false
     }
   },
   computed: {
     isPublicPage () {
       return !this.userId
+    }
+  },
+  beforeMount () {
+    // web component mode
+    if (!this.$root.config) {
+      // set dummy config object
+      // FIXME: need a better way, should we receive the config through attributes ?
+      this.$root.config = {
+        isWebComponent: true,
+        server: this.serverUrl,
+        enableAvatars: true // TODO: read from actual config
+      }
     }
   },
   methods: {
