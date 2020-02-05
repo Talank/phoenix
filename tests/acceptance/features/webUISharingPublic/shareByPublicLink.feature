@@ -64,7 +64,7 @@ Feature: Share by public link
       | name        | Public link    |
     And a link named "Public link" should be listed with role "Uploader" in the public link list of folder "simple-folder" on the webUI
     When the public uses the webUI to access the last public link created by user "user1"
-    Then there should be no files/folders listed on the webUI
+    Then there should be no resources listed on the webUI
 
   Scenario: public link share shows up on shared-with-others page
     Given user "user1" has logged in using the webUI
@@ -1004,4 +1004,10 @@ Feature: Share by public link
     When the user opens folder "simple-folder/sub-folder" directly on the webUI
     Then a link named "Public Link" should be listed with role "Viewer" in the public link list of resource "textfile.txt" via "simple-folder" on the webUI
     And a link named "strängé लिंक नाम (#2 &).नेपाली" should be listed with role "Viewer" in the public link list of resource "textfile.txt" via "sub-folder" on the webUI
+
+  @issue-1910
+  Scenario: trashbin list appears empty when no deleted files exist
+    Given user "user1" has shared folder "simple-empty-folder" with link with "read, update, create, delete" permissions
+    When the public opens the public link page of the last public link created by user "user1"
+    Then there should be no resources listed on the webUI
 

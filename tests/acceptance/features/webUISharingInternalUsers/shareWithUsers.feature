@@ -563,3 +563,13 @@ Feature: Sharing files and folders with internal users
     And the user opens the share dialog for folder "simple-folder" using the webUI
     Then user "User Two" should be listed without additional info in the collaborators list on the webUI
 
+  @issue-1910
+  Scenario: shared with me list appears empty when incoming shares are not present
+    When the user browses to the shared-with-me page
+    Then there should be no resources listed on the webUI
+
+  @issue-1910
+  Scenario: shared with others list appears empty when outgoing shares are not present
+    When the user browses to the shared-with-others page
+    Then there should be no resources listed on the webUI
+

@@ -70,7 +70,7 @@ Feature: files and folders exist in the trashbin after being deleted
     Then folder "my-empty-folder" should be listed on the webUI
     But folder "my-other-empty-folder" should not be listed on the webUI
     When the user opens folder "my-empty-folder" using the webUI
-    Then there should be no files/folders listed on the webUI
+    Then there should be resources files/folders listed on the webUI
 
   Scenario: Delete multiple file with same filename and check they are in the trashbin
     When the user deletes the following elements using the webUI
@@ -93,3 +93,9 @@ Feature: files and folders exist in the trashbin after being deleted
 #    And file "lorem.txt" with path "./lorem.txt" should be listed in the trashbin on the webUI
 #    And file "lorem.txt" with path "simple-folder/lorem.txt" should be listed in the trashbin on the webUI
 #    And file "lorem.txt" with path "strängé नेपाली folder/lorem.txt" should be listed in the trashbin on the webUI
+
+  @issue-1910
+  Scenario: trashbin list appears empty when no deleted files exist
+    When the user browses to the trashbin page
+    Then there should be no resources listed on the webUI
+

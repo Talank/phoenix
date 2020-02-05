@@ -320,10 +320,16 @@ When('the user unmarks the favorited file/folder {string} using the webUI', func
   return client.page.FilesPageElement.filesList().unmarkFavorite(path)
 })
 
-Then(/there should be no files\/folders listed on the webUI/, function () {
-  return client.page.FilesPageElement.filesList().allFileRows(function (result) {
-    client.assert.equal(result.value.length, 0)
-  })
+Then('there should be no files/folders/resources listed on the webUI', async function () {
+  const noContentMessageVisible = await client
+    .page
+    .FilesPageElement.filesList()
+    .isNoContentMessageVisible()
+
+  const allRowsResult = await client.page.FilesPageElement.filesList().allFileRows()
+
+  assert.ok(noContentMessageVisible, 'Empty message must be visible')
+  assert.ok(allRowsResult.value.length === 0, `No resources are listed, ${allRowsResult.length} found`)
 })
 
 Then('file/folder {string} should be listed on the webUI', function (folder) {
